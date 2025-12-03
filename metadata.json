@@ -1,0 +1,5 @@
+{
+  "name": "Calendário Pagamento Prefeitura de Inajá",
+  "description": "Um calendário inteligente que destaca automaticamente o último dia útil de cada mês, ideal para servidores públicos de Inajá acompanharem datas de pagamento.",
+  "requestFramePermissions": []
+}
