@@ -13,18 +13,18 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ days, onDayClick, se
   const today = new Date();
 
   return (
-    <div className="w-full bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-700">
+    <div className="w-full glass-panel overflow-hidden">
       {/* Weekday Headers */}
-      <div className="grid grid-cols-7 bg-gray-900/50 border-b border-gray-700">
+      <div className="grid grid-cols-7 bg-black/20 border-b border-white/5">
         {WEEKDAYS.map((day) => (
-          <div key={day} className="py-3 text-center text-xs font-semibold text-gray-400 uppercase tracking-wider">
+          <div key={day} className="py-4 text-center text-xs font-bold text-white/60 uppercase tracking-widest">
             {day}
           </div>
         ))}
       </div>
 
       {/* Days Grid */}
-      <div className="grid grid-cols-7 auto-rows-fr bg-gray-800">
+      <div className="grid grid-cols-7 auto-rows-fr">
         {days.map((day, index) => {
           const isSelected = selectedDate && 
                              day.date.getDate() === selectedDate.getDate() && 
@@ -34,28 +34,29 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ days, onDayClick, se
                           day.date.getMonth() === today.getMonth() &&
                           day.date.getFullYear() === today.getFullYear();
 
-          let bgClass = 'bg-gray-800';
+          // Base Glass Style
+          let bgClass = 'bg-transparent';
           let textClass = 'text-gray-300';
-          let hoverClass = 'hover:bg-gray-700';
-          let borderClass = 'border-gray-700';
-
+          let hoverClass = 'hover:bg-white/5';
+          let borderClass = 'border-r border-b border-white/5';
+          
           if (!day.isCurrentMonth) {
             textClass = 'text-gray-600';
-            bgClass = 'bg-gray-900/50';
+            bgClass = 'bg-black/20'; // Darker for disabled
           } else {
             if (day.type === DayType.PAYMENT_DAY) {
-              bgClass = 'bg-green-900/20';
-              textClass = 'text-green-400 font-bold';
-              borderClass = 'ring-1 ring-inset ring-green-900/50';
-              hoverClass = 'hover:bg-green-900/30';
+              // RED FOR PAYMENT (Anamorphic Red)
+              bgClass = 'bg-gradient-to-br from-red-900/40 to-red-900/10';
+              textClass = 'text-red-100 font-bold';
+              borderClass = `${borderClass} shadow-[inset_0_0_20px_rgba(220,38,38,0.2)]`;
+              hoverClass = 'hover:bg-red-900/50 hover:shadow-[inset_0_0_30px_rgba(220,38,38,0.4)]';
             } else if (day.type === DayType.COMMITMENT_DAY) {
-              // More vibrant purple
-              bgClass = 'bg-purple-900/60'; 
-              textClass = 'text-purple-100 font-bold';
-              borderClass = 'ring-1 ring-inset ring-purple-500/50';
-              hoverClass = 'hover:bg-purple-900/70';
+              // Purple for Commitment
+              bgClass = 'bg-purple-900/20'; 
+              textClass = 'text-purple-200 font-semibold';
+              hoverClass = 'hover:bg-purple-900/30';
             } else if (day.type === DayType.WEEKEND) {
-              bgClass = 'bg-gray-900/30';
+              bgClass = 'bg-black/10';
               textClass = 'text-gray-500';
             } else if (day.type === DayType.HOLIDAY) {
               bgClass = 'bg-amber-900/20';
@@ -63,25 +64,26 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ days, onDayClick, se
             }
           }
 
-          // Today Highlighting (if not selected)
+          // Today Highlighting
           if (isToday && !isSelected) {
-             borderClass = `${borderClass} ring-2 ring-inset ring-blue-500`;
-             textClass = `${textClass} font-bold`;
+             bgClass = `${bgClass} relative overflow-hidden`;
+             // Add a subtle glow for today
+             borderClass = `${borderClass} ring-1 ring-inset ring-blue-400/50`;
           }
 
+          // Selected State (Glass pop effect)
           if (isSelected) {
-             bgClass = 'bg-blue-600 text-white shadow-md scale-105 transform transition-transform z-10 rounded-lg';
-             textClass = 'text-white'; // Override
-             hoverClass = 'hover:bg-blue-700';
-             // Override specific types if selected
+             bgClass = 'bg-gradient-to-br from-blue-600/90 to-blue-800/90 text-white shadow-xl scale-105 transform z-10 rounded-xl backdrop-blur-2xl border border-white/20';
+             textClass = 'text-white';
+             hoverClass = '';
+             borderClass = 'ring-1 ring-white/30'; 
+             
+             // Override specifics if selected
              if (day.type === DayType.PAYMENT_DAY) {
-                 bgClass = 'bg-green-600 text-white shadow-lg scale-105 z-10 rounded-lg';
-                 hoverClass = 'hover:bg-green-700';
+                 bgClass = 'bg-gradient-to-br from-red-600/90 to-red-800/90 text-white shadow-neon-red scale-105 z-20 rounded-xl border border-red-400/50';
              } else if (day.type === DayType.COMMITMENT_DAY) {
-                 bgClass = 'bg-purple-600 text-white shadow-lg scale-105 z-10 rounded-lg';
-                 hoverClass = 'hover:bg-purple-700';
+                 bgClass = 'bg-gradient-to-br from-purple-600/90 to-purple-800/90 text-white shadow-lg scale-105 z-10 rounded-xl border border-purple-400/50';
              }
-             borderClass = ''; 
           }
 
           return (
@@ -89,41 +91,49 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ days, onDayClick, se
               key={index}
               onClick={() => onDayClick(day)}
               className={`
-                relative h-24 sm:h-32 p-2 flex flex-col items-start justify-start transition-all duration-200 ease-in-out border-b border-r border-gray-700
+                relative h-24 sm:h-32 p-3 flex flex-col items-start justify-start 
+                transition-all duration-300 ease-out outline-none
+                /* Animation & Interaction Classes */
+                active:scale-[0.96] active:duration-75
                 ${bgClass} ${textClass} ${hoverClass} ${borderClass}
               `}
             >
-              <div className="flex justify-between w-full">
-                <span className={`text-sm ${day.dayOfMonth === 1 ? 'font-bold underline' : ''}`}>
+              {/* Interaction Overlay (Flash/Ripple Effect) */}
+              <div className="absolute inset-0 bg-white/0 active:bg-white/10 transition-colors duration-75 pointer-events-none rounded-xl" />
+
+              <div className="flex justify-between w-full relative z-10">
+                <span className={`text-sm ${day.dayOfMonth === 1 ? 'font-extrabold underline decoration-white/30' : ''}`}>
                   {day.dayOfMonth}
                 </span>
                 {isToday && (
                   <span className="flex h-2 w-2 relative">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.8)]"></span>
                   </span>
                 )}
               </div>
               
               {/* Indicators */}
-              <div className="mt-auto w-full flex flex-col gap-1">
+              <div className="mt-auto w-full flex flex-col gap-1.5 relative z-10">
                 {day.type === DayType.PAYMENT_DAY && day.isCurrentMonth && (
-                  <span className={`text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded w-fit self-center mb-1 text-center leading-tight ${isSelected ? 'bg-white/20 text-white' : 'bg-green-900/50 text-green-200 border border-green-800'}`}>
-                    {day.paymentText && day.paymentText.toLowerCase().includes('oficineiros') ? 'PGTO OFICINEIROS' : 'PAGAMENTO'}
-                  </span>
+                  <div className={`
+                    text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md w-full text-center leading-tight transition-all
+                    ${isSelected ? 'bg-black/20 text-white' : 'bg-red-500/20 text-red-200 border border-red-500/30 shadow-[0_0_10px_rgba(220,38,38,0.2)]'}
+                  `}>
+                    {day.paymentText && day.paymentText.toLowerCase().includes('oficineiros') ? 'OFICINEIROS' : 'PAGAMENTO'}
+                  </div>
                 )}
                 
                 {day.type === DayType.COMMITMENT_DAY && day.isCurrentMonth && (
-                  <span className={`flex items-center gap-1 text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded w-fit self-center mb-1 ${isSelected ? 'bg-white/20 text-white' : 'bg-purple-600 text-white border border-purple-500 shadow-sm'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
-                    </svg>
+                  <div className={`flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md w-full mb-1
+                     ${isSelected ? 'bg-black/20 text-white' : 'bg-purple-500/20 text-purple-200 border border-purple-500/30'}`}>
+                    <div className="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
                     EMPENHO
-                  </span>
+                  </div>
                 )}
                 
                 {day.type === DayType.HOLIDAY && day.isCurrentMonth && (
-                   <span className="text-[9px] sm:text-[10px] leading-tight truncate w-full text-center opacity-70">
+                   <span className="text-[9px] sm:text-[10px] font-medium leading-tight truncate w-full text-center opacity-80 text-amber-400">
                      {day.holidayName}
                    </span>
                 )}

@@ -23,7 +23,7 @@ export const PrintableCalendar: React.FC<PrintableCalendarProps> = ({ days, mont
         </div>
         <div className="text-right">
           <h2 className="text-2xl font-bold text-gray-800 capitalize">
-            {monthName} <span className="text-green-600">{year}</span>
+            {monthName} <span className="text-red-600">{year}</span>
           </h2>
           <p className="text-xs text-gray-500 mt-1">Gerado em {new Date().toLocaleDateString('pt-BR')}</p>
         </div>
@@ -72,8 +72,8 @@ export const PrintableCalendar: React.FC<PrintableCalendarProps> = ({ days, mont
 
                 <div className="w-full flex flex-col gap-1 items-center">
                   {day.type === DayType.PAYMENT_DAY && day.isCurrentMonth && (
-                    <div className="w-full bg-green-100 border border-green-300 rounded px-1 py-1 text-center">
-                      <p className="text-[9px] font-bold text-green-800 uppercase leading-tight">
+                    <div className="w-full bg-red-100 border border-red-300 rounded px-1 py-1 text-center">
+                      <p className="text-[9px] font-bold text-red-800 uppercase leading-tight">
                          {day.paymentText || 'Pagamento'}
                       </p>
                     </div>
@@ -99,8 +99,8 @@ export const PrintableCalendar: React.FC<PrintableCalendarProps> = ({ days, mont
           <h3 className="text-sm font-bold text-gray-700 mb-2 uppercase border-b border-gray-200 pb-1">Legenda</h3>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
-              <span className="text-xs text-gray-700 font-medium">Dia de Pagamento</span>
+              <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
+              <span className="text-xs text-gray-700 font-medium">Dia de Pagamento (Vermelho)</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-purple-50 border border-purple-200 rounded"></div>
@@ -118,7 +118,7 @@ export const PrintableCalendar: React.FC<PrintableCalendarProps> = ({ days, mont
            <p className="text-xs text-gray-600 mb-1">
              O pagamento geral dos servidores será realizado no dia:
            </p>
-           <p className="text-xl font-bold text-green-600">
+           <p className="text-xl font-bold text-red-600">
              {lastBusinessDay} de {monthName}
            </p>
         </div>
